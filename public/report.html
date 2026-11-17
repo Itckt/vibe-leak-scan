@@ -4,11 +4,13 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow">
   <title>掃描報告 · 漏唔漏</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><script type="module" src="/report.js"></script>
+  <script type="module" src="/service-status.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至報告內容</a>
   <header class="site-header"><a class="brand" href="/" aria-label="漏唔漏首頁"><span class="brand-mark" aria-hidden="true">漏</span>漏唔漏<span class="version">第一版</span></a><a class="back-link" href="/">← 掃描另一個網站</a></header>
   <main id="main" class="report-layout">
+    <p id="service-notice" class="notice-box" hidden></p>
     <p id="report-status" role="status" class="loading-text">正在讀取掃描報告…</p>
     <div id="report-content" hidden>
       <div class="report-heading"><div><p class="eyebrow">讓問題變成下一步</p><h1>網站安全報告</h1><p id="report-target" class="report-target"></p></div><button id="copy-plan" class="button secondary" type="button">複製整份修復計劃</button><button id="copy-link" class="button secondary" type="button">複製報告連結</button></div>

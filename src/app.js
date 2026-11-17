@@ -6,6 +6,8 @@ import { validateTarget } from './network.js';
 import { scan } from './scanner.js';
 import { VerificationStore } from './verification.js';
 import { ReportStore, REPORT_ID } from './storage.js';
+import { MemoryReportStore, HOSTED_REPORT_TTL_MS } from './memory-reports.js';
+import { validatePublicOrigin } from './runtime.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 
@@ -21,9 +23,11 @@ export class WindowLimiter {
   }
 }
 
-export function createApp({ dataDirectory = path.join(root, 'data'), verifications = new VerificationStore() } = {}) {
+export function createApp({ dataDirectory = path.join(root, 'data'), verifications = new VerificationStore(), publicOrigin = null } = {}) {
+  const origin = publicOrigin === null ? null : validatePublicOrigin(publicOrigin);
+  if (origin && process.env.ALLOW_PRIVATE_TARGETS === '1') throw new Error('線上模式不可啟用 ALLOW_PRIVATE_TARGETS。');
   const app = express();
-  const reports = new ReportStore(dataDirectory);
+  const reports = origin ? new MemoryReportStore() : new ReportStore(dataDirectory);
   const scans = new WindowLimiter(5);
   const proofs = new WindowLimiter(20);
   let activeScans = 0;
@@ -35,9 +39,16 @@ export function createApp({ dataDirectory = path.join(root, 'data'), verificatio
       'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
       'X-Content-Type-Options': 'nosniff', 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'no-referrer', 'Cache-Control': 'no-store',
     });
+    if (origin) {
+      res.set({ 'Strict-Transport-Security': 'max-age=31536000', 'X-Robots-Tag': 'noindex, nofollow' });
+      if (process.env.ALLOW_PRIVATE_TARGETS === '1') return next(new AppError('UNSAFE_CONFIGURATION', '服務設定錯誤，暫停接受請求。', 503));
+    }
+    // Health checks return no report data and may use an internal proxy Host.
+    if (req.method === 'GET' && req.path === '/healthz') return res.json({ status: 'ok' });
     const hostname = req.hostname.toLowerCase();
-    if (!['localhost', '127.0.0.1', '[::1]', '::1'].includes(hostname)) return next(new AppError('INVALID_HOST', '此本機工具只接受本機網址。', 403));
-    if (req.method === 'POST' && req.headers.origin && req.headers.origin !== `http://${req.headers.host}`) {
+    const validHost = origin ? req.headers.host?.toLowerCase() === new URL(origin).host : ['localhost', '127.0.0.1', '[::1]', '::1'].includes(hostname);
+    if (!validHost) return next(new AppError('INVALID_HOST', '不接受這個服務網址。', 403));
+    if (req.method === 'POST' && req.headers.origin && req.headers.origin !== (origin || `http://${req.headers.host}`)) {
       return next(new AppError('INVALID_ORIGIN', '不接受來自其他網站的操作請求。', 403));
     }
     if (req.method === 'POST' && !req.is('application/json')) return next(new AppError('INVALID_BODY', '請以 JSON 格式提交請求。', 415));
@@ -45,13 +56,14 @@ export function createApp({ dataDirectory = path.join(root, 'data'), verificatio
   });
   app.use(express.json({ limit: '16kb', strict: true }));
   const limit = (limiter) => (req, res, next) => {
-    // Forwarded headers never choose the rate-limit identity.
-    if (!limiter.take(req.socket.remoteAddress || 'unknown')) {
+    // Hosted visitors share a conservative quota; forwarded headers cannot bypass it.
+    if (!limiter.take(origin ? 'hosted-service' : req.socket.remoteAddress || 'unknown')) {
       res.set('Retry-After', '60');
-      return next(new AppError('RATE_LIMIT', '請求過於頻繁；每個 IP 每分鐘最多五次掃描，請稍後再試。', 429));
+      return next(new AppError('RATE_LIMIT', origin ? '試用服務的請求次數已達上限，請稍候一分鐘再試。' : '請求過於頻繁；每個 IP 每分鐘最多五次掃描，請稍後再試。', 429));
     }
     next();
   };
+  app.get('/api/status', (_req, res) => res.json({ hosted: Boolean(origin), reportRetentionMinutes: origin ? HOSTED_REPORT_TTL_MS / 60000 : null }));
   app.post('/api/verifications', limit(proofs), async (req, res) => {
     const { url } = await validateTarget(req.body?.url);
     res.status(201).json(verifications.issue(url.href));

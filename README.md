@@ -6,7 +6,7 @@
 
 貼上自己的網站網址，選擇檢查範圍，再按報告逐項修正。深度掃描必須先證明網站擁有權；未發現問題不代表網站完全安全。
 
-這是可在本機執行的作品專案，規格見 [SPEC.md](SPEC.md)。目前涵蓋 v1、v1.1 及 v1.2；安裝、API 與完整限制見[使用指南](docs/USAGE.md)。
+這是可在本機執行、亦可部署為線上試用服務的作品專案，規格見 [SPEC.md](SPEC.md)。目前涵蓋 v1、v1.1 及 v1.2；安裝、API 與完整限制見[使用指南](docs/USAGE.md)，公開服務設定見[線上部署說明](docs/HOSTING.md)。
 
 第一次看這個專案，可以先讀[三分鐘示範](docs/DEMO.md)，再沿著[設計與程式導覽](docs/DESIGN-REVIEW.md)及[六個安全測試](docs/TEST-TOUR.md)核對實作。專案採 AI 協作開發；驗證紀錄區分親自執行結果與使用者提供的外部回饋。
 
@@ -39,7 +39,7 @@ npm test
 npm start
 ```
 
-開啟 `http://localhost:3000`。服務只綁定 `127.0.0.1`，只接受本機介面存取。只掃描自己擁有或獲授權檢查的網站。
+開啟 `http://localhost:3000`。預設只綁定 `127.0.0.1`，只接受本機介面存取。只掃描自己擁有或獲授權檢查的網站。
 
 想完全離線示範，先依[本機 fixture 操作說明](docs/SHOWCASE.md)設定 `ALLOW_PRIVATE_TARGETS=1`，再啟動專案內的測試網站。這個例外只用於本機測試。
 
@@ -82,7 +82,7 @@ node scripts/benchmark-imports.js
 
 `verify:ssrf` 要在未設定 `ALLOW_PRIVATE_TARGETS` 的程序執行；端到端 fixture 驗證的啟動方式見[使用指南](docs/USAGE.md)。測試不依賴真實憑證或第三方網站。
 
-正式副本重新驗證：288 項測試、3 項 SSRF 檢查及 14 項本機 API 回歸全部通過。親自執行的指令、結果及未驗證項目集中記錄在 [VERIFICATION.md](VERIFICATION.md)，效能數字只代表列出的合成樣本與環境。
+加入線上模式後重新驗證：312 項測試、3 項 SSRF 檢查及 14 項本機 API 回歸全部通過。親自執行的指令、結果及未驗證項目集中記錄在 [VERIFICATION.md](VERIFICATION.md)，效能數字只代表列出的合成樣本與環境。
 
 ## 已知限制
 
@@ -91,7 +91,7 @@ node scripts/benchmark-imports.js
 - Supabase 每表最多讀取一列；空回應或拒絕存取都不足以證明全部 RLS 政策安全。
 - 檔案及流量上限會限制覆蓋範圍。HTTP 非 200 或 HTML 回退不當成 JavaScript；失敗候選仍佔檔案名額。
 - 平台辨識依特徵判斷。現有真站回饋只涵蓋一個純靜態網站，未把它視為所有 AI builder 或打包流程的驗證。
-- 報告沒有帳戶登入保護；知道隨機報告連結的人可以讀取。本版是本機工具，未提供公眾服務部署流程。
+- 報告沒有帳戶登入保護；知道隨機報告連結的人可以讀取。線上試用版的報告只暫存記憶體，最多一小時，服務重啟或容量已滿時可能提前移除；所有訪客共用每分鐘五次掃描配額。
 
 ## 技術與導覽
 
@@ -109,4 +109,4 @@ data/         執行時產生的報告；已由 .gitignore 排除
 
 [規格](SPEC.md) · [使用指南](docs/USAGE.md) · [示範與截圖](docs/SHOWCASE.md)
 
-本專案採用 [MIT 授權](LICENSE)，署名為 `itckt`；授權原文依 [Open Source Initiative](https://opensource.org/license/mit)。目前只準備本機版本，尚未加入 remote 或公開發佈。
+本專案採用 [MIT 授權](LICENSE)，署名為 `itckt`；授權原文依 [Open Source Initiative](https://opensource.org/license/mit)。原始碼已公開於 [GitHub](https://github.com/Itckt/vibe-leak-scan)。

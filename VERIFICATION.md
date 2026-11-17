@@ -2,6 +2,23 @@
 
 各階段分開記錄親自執行的檢查。使用者轉述的真站驗收另列於作品案例，不當成本輪重新執行的結果。
 
+## GitHub 發佈與線上模式本機驗證：2026-11-17
+
+已建立公開儲存庫 `Itckt/vibe-leak-scan`，並推送 `main`；首次推送的遠端 SHA 為 `307d9e4e5e8596149c2800a2fb5830e325775846`，與正式副本相同。使用者隨後要求免安裝的線上服務，因此新增明確啟用的線上模式、HTTPS origin 檢查、共用掃描配額及有容量和期限限制的記憶體報告。預設本機模式仍保留。
+
+本輪親自執行：
+
+| 指令 | 結果 |
+| --- | --- |
+| `npm test`（首次新增線上測試後） | **308 通過、4 失敗**；新增測試的 fetch 用戶端沒有保留模擬反向代理的 Host，請求在 Host 門檻被拒 |
+| `npm test`（測試改用原生本機 HTTP 請求後） | **312 通過、0 失敗**；無取消、略過或待辦；約 4,803 ms |
+| `Remove-Item Env:ALLOW_PRIVATE_TARGETS -ErrorAction SilentlyContinue; npm run verify:ssrf` | **3 通過、0 失敗** |
+| `$env:ALLOW_PRIVATE_TARGETS = '1'; node data/verify-formal-copy.mjs` | **14 通過、0 失敗**；只使用本機 fixture |
+
+新增二十四項測試涵蓋設定拒絕、Host 與 Origin、轉送標頭不可繞過共用配額、公開模式仍拒絕私網及未驗證深度掃描、報告到期、容量及遮蓋。修正的是測試送出 Host 的方式，沒有放寬服務的 Host 檢查。
+
+這一節記錄的是部署前的本機驗證；不能當成託管環境已部署成功或已實際掃描外部網站的證據。沒有掃描真實第三方網站，也沒有重跑效能量測。後續公開服務的狀態以實際部署結果為準。
+
 ## 作者與套件資料修訂：2026-11-17
 
 依使用者指示在正式副本設定 repo local 身分：`itckt <itckt@users.noreply.github.com>`，沒有修改 global Git 設定。分支為 `main`，`package.json` 與 `package-lock.json` 的專案版本均更新為 `1.2.0`。LICENSE 及中英 README 署名改為 itckt，刪除專案 `.npmrc`、發佈準備文件及兩份 README 中相應的連結。

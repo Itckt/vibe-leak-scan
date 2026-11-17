@@ -8,10 +8,11 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
   <script type="module" src="/app.js"></script>
+  <script type="module" src="/service-status.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至主要內容</a>
-  <header class="site-header"><a class="brand" href="/" aria-label="漏唔漏首頁"><span class="brand-mark" aria-hidden="true">漏</span>漏唔漏<span class="version">第一版</span></a><span class="header-note"><span class="status-dot"></span>本機安全檢查工具</span></header>
+  <header class="site-header"><a class="brand" href="/" aria-label="漏唔漏首頁"><span class="brand-mark" aria-hidden="true">漏</span>漏唔漏<span class="version">第一版</span></a><span class="header-note"><span class="status-dot"></span><span id="service-kind">網站安全檢查工具</span></span></header>
   <main id="main" class="home-layout">
     <section class="intro">
       <p class="eyebrow">給自己建站的你</p>
@@ -28,6 +29,7 @@
       <div class="card-heading"><span class="eyebrow">從這裡開始</span><span class="pill">只讀檢查</span></div>
       <h2 id="scan-title">檢查你的網站</h2>
       <p class="muted">掃描你擁有或獲授權檢查的網站。</p>
+      <p id="service-notice" class="notice-box" hidden></p>
       <form id="scan-form">
         <label for="target-url" class="field-label">網站網址</label>
         <input id="target-url" name="url" type="url" inputmode="url" placeholder="https://你的網站.com" autocomplete="url" maxlength="2048" required aria-describedby="url-hint">

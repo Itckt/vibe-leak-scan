@@ -6,7 +6,7 @@
 
 Enter a site you own or are authorized to assess, choose a scan scope, and work through the findings. Deep scans require ownership verification. A clean report is not a security certification.
 
-This portfolio project implements v1, v1.1, and v1.2 of [SPEC.md](SPEC.md). It was developed with AI assistance. [Verification records](VERIFICATION.md) distinguish checks actually run from external feedback supplied by the project owner.
+This portfolio project implements v1, v1.1, and v1.2 of [SPEC.md](SPEC.md), with optional hosted trial mode described in the [deployment guide](docs/HOSTING.md). It was developed with AI assistance. [Verification records](VERIFICATION.md) distinguish checks actually run from external feedback supplied by the project owner.
 
 ## Screenshots
 
@@ -39,7 +39,7 @@ npm test
 npm start
 ```
 
-Open `http://localhost:3000`. The service binds to `127.0.0.1` and accepts local interface access. Only scan sites you own or have permission to assess.
+Open `http://localhost:3000`. By default the service binds to `127.0.0.1` and accepts local interface access. Only scan sites you own or have permission to assess.
 
 ### Try the bundled fixture
 
@@ -93,7 +93,7 @@ npm run verify:ssrf
 node scripts/benchmark-imports.js
 ```
 
-Run `verify:ssrf` in a terminal without `ALLOW_PRIVATE_TARGETS` set. The formal project copy was verified with **288 tests, 3 SSRF checks, and 14 local API checks, all passing**. Exact commands, earlier benchmark timings, and verification boundaries are recorded in [VERIFICATION.md](VERIFICATION.md).
+Run `verify:ssrf` in a terminal without `ALLOW_PRIVATE_TARGETS` set. The formal project copy was verified with **312 tests, 3 SSRF checks, and 14 local API checks, all passing**. Exact commands, earlier benchmark timings, and verification boundaries are recorded in [VERIFICATION.md](VERIFICATION.md).
 
 Tests use local fixtures rather than real credentials or third-party scans. Benchmark timings apply to the specified synthetic inputs and machine, not every possible source file.
 
@@ -104,7 +104,7 @@ Tests use local fixtures rather than real credentials or third-party scans. Benc
 - Supabase checks retrieve at most one row per table. Empty or denied responses do not prove that every RLS policy is safe.
 - Resource caps limit coverage. Non-200 responses and HTML fallbacks do not count as JavaScript; unsuccessful candidates still consume file slots.
 - Platform detection uses recognizable signals. The external site feedback covers one plain static site, not representative production deployments of every AI builder.
-- Reports have random URLs but no account-based access control. Anyone who knows a report link can read it while the local service is accessible. This version is a local tool, not a prepared public hosting service.
+- Reports have random URLs but no account-based access control. Anyone who knows a report link can read it. Hosted trial reports remain in memory for at most one hour and can disappear earlier after a restart or capacity eviction. All hosted visitors share five scan requests per minute.
 
 ## Stack and project guide
 
@@ -124,4 +124,4 @@ Traditional Chinese guides: [Usage](docs/USAGE.md), [Three-minute demo](docs/DEM
 
 ## License and release status
 
-This project uses the [MIT License](LICENSE), attributed to `itckt`, using the [Open Source Initiative text](https://opensource.org/license/mit). The repository is prepared locally; no remote or public release has been created.
+This project uses the [MIT License](LICENSE), attributed to `itckt`, using the [Open Source Initiative text](https://opensource.org/license/mit). The source is public on [GitHub](https://github.com/Itckt/vibe-leak-scan).
