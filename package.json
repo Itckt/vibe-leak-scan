@@ -1,0 +1,20 @@
+{
+  "name": "vibe-leak-scan",
+  "version": "1.2.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.8 <23" },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test --experimental-test-isolation=none --test-concurrency=1 tests/*.test.js",
+    "fixture": "node fixtures/server.js",
+    "verify:local": "node scripts/verify-local.js",
+    "verify:ssrf": "node scripts/check-ssrf.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "ipaddr.js": "^2.2.0",
+    "parse5": "^7.2.1"
+  }
+}

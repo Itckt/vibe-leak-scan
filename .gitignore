@@ -1,0 +1,9 @@
+node_modules/
+data/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+.test-output/
+.npm-cache/

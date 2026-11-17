@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="掃描你擁有的網站，找出前端密鑰與安全設定問題，取得繁體中文修復指令。">
+  <title>漏唔漏 · 網站安全掃描</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要內容</a>
+  <header class="site-header"><a class="brand" href="/" aria-label="漏唔漏首頁"><span class="brand-mark" aria-hidden="true">漏</span>漏唔漏<span class="version">第一版</span></a><span class="header-note"><span class="status-dot"></span>本機安全檢查工具</span></header>
+  <main id="main" class="home-layout">
+    <section class="intro">
+      <p class="eyebrow">給自己建站的你</p>
+      <h1>上線之前，<br>看看有冇<span class="accent-word">漏。</span></h1>
+      <p class="lead">網站做好了，密鑰有沒有跟著公開？<br>貼上網址，找出風險，帶著修復指令回去改。</p>
+      <div class="feature-list">
+        <div><span class="feature-number">01</span><p><strong>看清楚問題</strong><span>密鑰外洩、安全標頭、原始碼對照檔</span></p></div>
+        <div><span class="feature-number">02</span><p><strong>知道怎樣修</strong><span>繁體中文解釋，附可複製的 AI 修復指令</span></p></div>
+        <div><span class="feature-number">03</span><p><strong>驗證後再深入</strong><span>檢查敏感檔案與 Supabase 匿名讀取權限</span></p></div>
+      </div>
+      <p class="privacy-note"><span aria-hidden="true">◈</span> 密鑰只顯示頭六與尾四個字元，原始內容不會寫入報告。</p>
+    </section>
+    <section class="scan-card" aria-labelledby="scan-title">
+      <div class="card-heading"><span class="eyebrow">從這裡開始</span><span class="pill">只讀檢查</span></div>
+      <h2 id="scan-title">檢查你的網站</h2>
+      <p class="muted">掃描你擁有或獲授權檢查的網站。</p>
+      <form id="scan-form">
+        <label for="target-url" class="field-label">網站網址</label>
+        <input id="target-url" name="url" type="url" inputmode="url" placeholder="https://你的網站.com" autocomplete="url" maxlength="2048" required aria-describedby="url-hint">
+        <p id="url-hint" class="hint">請包含 https:// 或 http://，不需登入網站。</p>
+        <fieldset class="mode-options"><legend class="field-label">選擇檢查範圍</legend>
+          <label class="mode-choice"><input type="radio" name="mode" value="passive" checked><span><strong>被動掃描</strong><small>檢查公開網頁與程式檔案</small></span><span class="small-tag">即時開始</span></label>
+          <label class="mode-choice"><input type="radio" name="mode" value="deep"><span><strong>深度掃描</strong><small>加入資料權限與敏感檔案檢查</small></span><span class="small-tag">需驗證</span></label>
+        </fieldset>
+        <div id="verification" class="verification-box" hidden>
+          <h3>先證明這個網站屬於你</h3>
+          <p>取得驗證碼後，選擇以下其中一種方式。驗證有效十五分鐘，掃描前會再確認一次。</p>
+          <button id="issue-token" type="button" class="button secondary">取得驗證碼</button>
+          <div id="proof-instructions" hidden>
+            <p><strong>方法一：</strong>在網站首頁的 <code>&lt;head&gt;</code> 加入：</p>
+            <pre id="meta-snippet" tabindex="0"></pre><button type="button" id="copy-meta" class="text-button">複製標記</button>
+            <p><strong>方法二：</strong>建立 <code>/.well-known/laumlau-verify.txt</code>，內容只放以下驗證碼：</p>
+            <pre id="token-value" tabindex="0"></pre><button type="button" id="copy-token" class="text-button">複製驗證碼</button>
+            <p class="hint" id="proof-expiry"></p>
+            <button id="check-token" type="button" class="button secondary">已放好，驗證擁有權</button>
+          </div>
+          <p id="verification-status" role="status" class="status-message"></p>
+        </div>
+        <button id="scan-button" class="button primary" type="submit">開始被動掃描 <span aria-hidden="true">↗</span></button>
+        <p class="hint scan-hint">最多讀取 30 個程式檔案。每次掃描最長約兩分鐘。</p>
+      </form>
+      <div id="scan-progress" class="progress-box" role="status" hidden><span class="spinner" aria-hidden="true"></span><div><strong>正在檢查網站…</strong><p>正在讀取公開資源與整理報告，請保持頁面開啟。</p></div></div>
+      <p id="form-error" class="error-message" role="alert" hidden></p>
+    </section>
+  </main>
+  <section class="scope-strip" aria-label="檢查說明"><div><strong>看得到，才檢查</strong><p>不執行網站程式，不嘗試登入。</p></div><div><strong>深度檢查也只讀</strong><p>只發出 GET 請求，不新增、修改或刪除資料。</p></div><div><strong>報告是起點</strong><p>自動檢查有其範圍，未發現問題不代表完全安全。</p></div></section>
+  <footer>漏唔漏 <span>·</span> 少一點外洩，多一點安心。</footer>
+</body>
+</html>
