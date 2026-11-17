@@ -2,7 +2,28 @@
 
 線上版沿用 Node.js 掃描器及釘選已驗證 IP 的網路層，需要能執行 Node.js 22 的後端。靜態檔案託管無法獨立提供掃描服務。
 
-## Render 設定
+## Railway 免費試用部署
+
+目前線上入口：[漏唔漏免安裝試用版](https://vibe-leak-scan-production.up.railway.app/)。2026-11-17 已完成部署，沒有加入信用卡或啟用付費方案。訪客使用掃描器不需要 Railway 帳戶。
+
+| 項目 | 本次設定 |
+| --- | --- |
+| 來源 | 公開儲存庫 `https://github.com/Itckt/vibe-leak-scan`，`main` |
+| 建置 | Railpack 自動辨識 Node.js；本次日誌為 Node.js 22.23.4、`npm install` |
+| 啟動 | `npm run start` |
+| 環境變數 | `HOSTED=1`、`PORT=3000`、`PUBLIC_ORIGIN=https://${{RAILWAY_PUBLIC_DOMAIN}}` |
+| 公開網址 | Railway 產生的 HTTPS 網域，轉送至 3000 埠 |
+| 健康檢查 | `/healthz` |
+| 規模 | US West、單一執行個體、單一 Node.js 程序 |
+| 閒置處理 | 已開啟 Serverless 休眠，重新喚醒可能較慢 |
+
+本次使用公開儲存庫網址，沒有安裝可存取私人儲存庫的 GitHub App。介面顯示自動部署不可用，因此更新來源後須在服務來源設定檢查更新並部署，不能假設推送 GitHub 就會更新線上服務。
+
+Railway 官方目前列明 Free 毋須信用卡，首次試用為 30 日或 US$5 額度，用完後轉為每月 US$1 免費額度；這不是無限流量或全天候可用性保證。額度與免費政策以供應商為準。帳戶已顯示通過驗證；其他帳戶若只有 Limited Trial，對外連線可能受限，不應用付費升級或放寬掃描器防護來隱藏此限制。參見[價格](https://railway.com/pricing)、[免費試用與網路限制](https://docs.railway.com/pricing/free-trial)、[變數](https://docs.railway.com/variables/reference)及[休眠機制](https://docs.railway.com/deployments/serverless)。
+
+已驗證公開首頁、狀態、健康檢查、安全標頭、私網阻擋、未驗證深度掃描及跨來源請求拒絕，共九項。沒有從線上服務掃描第三方網站；完整成功掃描的證據仍來自本機 fixture，見[驗證紀錄](../VERIFICATION.md)。
+
+## Render 設定（備用）
 
 | 項目 | 設定 |
 | --- | --- |
@@ -33,4 +54,4 @@ Render 會提供 `PORT` 和 `RENDER_EXTERNAL_URL`；程式只在 `HOSTED=1` 時�
 
 ## 目前部署狀態
 
-程式已公開並通過本機測試，但本次 Render 帳戶在建立 Free 服務時被要求加卡驗證。尚未提交卡資料或完成部署，暫無線上掃描網址；免費方案不代表每個帳戶都毋須驗卡。詳見 [驗證紀錄](../VERIFICATION.md)。
+Railway 線上試用版已啟用。先前 Render 帳戶在建立 Free 服務時被要求加卡驗證，因此沒有完成 Render 部署；未填寫或提交卡資料。免費方案不代表每個供應商或帳戶都毋須驗卡。詳見 [驗證紀錄](../VERIFICATION.md)。

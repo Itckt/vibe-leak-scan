@@ -2,9 +2,11 @@
 
 [繁體中文](README.md) · English
 
-**A local security checker for site owners: find suspected frontend secret leaks and configuration issues, then get Traditional Chinese reports and repair prompts for AI building tools.**
+**A security checker for site owners: find suspected frontend secret leaks and configuration issues, then get Traditional Chinese reports and repair prompts for AI building tools.**
 
 Enter a site you own or are authorized to assess, choose a scan scope, and work through the findings. Deep scans require ownership verification. A clean report is not a security certification.
+
+**No-install trial: [open the online scanner](https://vibe-leak-scan-production.up.railway.app/)**. Visitors need no account or credit card. Only assess sites you own or are authorized to check. The free service sleeps when idle, may take longer to open, and is subject to hosting credits. Reports expire after at most one hour and may disappear earlier on restart or eviction; save the repair prompts promptly.
 
 This portfolio project implements v1, v1.1, and v1.2 of [SPEC.md](SPEC.md), with optional hosted trial mode described in the [deployment guide](docs/HOSTING.md). It was developed with AI assistance. [Verification records](VERIFICATION.md) distinguish checks actually run from external feedback supplied by the project owner.
 
